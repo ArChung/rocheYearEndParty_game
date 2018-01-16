@@ -3275,6 +3275,9 @@ html, body {
   background-image: url("../images/r1.png");
 }
 .resultPage.r_2 {
+  background-image: url("../images/r1.png");
+}
+.resultPage.r_3 {
   background-image: url("../images/r2.png");
 }
 .resultPage .homeBtn {

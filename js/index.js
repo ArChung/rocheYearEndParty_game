@@ -6,6 +6,7 @@ $(document).ready(function () {
 var data = {
     playable: true,
     answerArr: [],
+    newPairArr: [],
     score: 0,
 
 }
@@ -24,19 +25,47 @@ function sortCard() {
 
 function initGame() {
     answerArr = [];
+    var prevAns = 0;
+    var needClear = false;
     $('.gamePage .container .card').on('click', function () {
         var t = $(this);
 
         if (data.playable && !t.hasClass('open')) {
+            if (needClear) {
+                $('.notedCard').removeClass('open');
+                cardAnimation($('.notedCard'));
+                $('.notedCard').removeClass('notedCard');
+                needClear = false;
+            }
+
             var id = ChungTool.returnClassNameWithFilter(t, 'cd')[0];
+
+            if (prevAns == 0) {
+                prevAns = id;
+                t.addClass('notedCard');
+            } else {
+                if (prevAns == id) {
+                    // right
+                    $('.notedCard').removeClass('notedCard');
+                    data.score += 1;
+                } else {
+                    // wrong
+                    t.addClass('notedCard');
+                    needClear = true;
+                }
+                prevAns=0;
+            }
+
+
+
             t.addClass('open');
             cardAnimation(t);
-            if (data.answerArr.indexOf(id) != -1) {
-                data.score += 1;
-            } else {
-                data.answerArr.push(id);
-            }
-            console.log(data.answerArr, data.score)
+            // if (data.answerArr.indexOf(id) != -1) {
+            //     data.score += 1;
+            // } else {
+            //     data.answerArr.push(id);
+            // }
+            console.log(data.score)
         }
     });
 
@@ -56,7 +85,7 @@ function startRemenber() {
     data.playable = false;
     allOpen();
     sortCard();
-    countTen(startPlay);
+    waitAndCall(10,startPlay);
 }
 
 function startPlay() {
@@ -64,16 +93,16 @@ function startPlay() {
     data.score = 0;
     data.answerArr = [];
     data.playable = true;
-    countTen(goResult)
+    waitAndCall(10,goResult)
 }
 
 function goResult() {
     console.log(data.score);
     var rp = $('.resultPage');
     data.playable = false;
-    data.score = (data.score >= 2) ? 2 : data.score;
-    ChungTool.removeClassWithFilter(rp,'r_');
-    rp.addClass('r_'+ data.score);
+    data.score = (data.score >= 3) ? 3 : data.score;
+    ChungTool.removeClassWithFilter(rp, 'r_');
+    rp.addClass('r_' + data.score);
 
     setTimeout(function () {
         $('.page').addClass('hide')
@@ -81,8 +110,8 @@ function goResult() {
     }, 1000)
 }
 
-function countTen(func) {
-    var timeLeft = 10;
+function waitAndCall(nun,func) {
+    var timeLeft = nun;
     var t = $('.gamePage .count');
     disTime();
     var rememberTimer = setInterval(disTime, 1000);
@@ -123,10 +152,13 @@ function cardAnimation(el) {
 }
 
 
-function resize(){
-  
-    $( window ).resize(function() {
+function resize() {
+
+    $(window).resize(function () {
         // console.log($(window).height()/1920);
-        TweenMax.set($('.mainContainer'),{scale:$(window).height()/1920,transformOrigin:'center top'})
-      }).resize();
+        TweenMax.set($('.mainContainer'), {
+            scale: $(window).height() / 1920,
+            transformOrigin: 'center top'
+        })
+    }).resize();
 }
