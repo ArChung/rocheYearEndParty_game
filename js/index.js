@@ -129,5 +129,4 @@ function resize(){
         // console.log($(window).height()/1920);
         TweenMax.set($('.mainContainer'),{scale:$(window).height()/1920,transformOrigin:'center top'})
       }).resize();
-    
 }
